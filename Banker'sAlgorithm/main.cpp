@@ -4,30 +4,77 @@ using namespace std;
 
 
 //Set the global variables
-int process[100];
-int allocation[100], max[100], available[100];
+int n; //Number of processes
+int m; //number of resources types
+int allocation[100][100];
+int maxMatrix[100][100]; //Don't ever use max as name because it's declared as sth else and can't implemented as arrays.
+int available[100];
+int needMatrix[100][100];
 
-/*
-  def banker(N: int, cash: int, loan: list, claim: list) -> bool:
-    """
-    Banker's algorithm, return True if in safe state,
-    False if in unsafe state
-    """
-    p = [i for i in range(N)]
-    for k in range(N):
-        sum = 0
-        for j in range(k):
-            sum += loan[p[j]]
-        found = False
-        for h in range(k, N):
-            if claim[p[h]] <= cash + sum:
-                p[h],p[k] = p[k],p[h]
-                found = True
-        if not found:
-            return False
-    return True
+int flag[100]; //A flag which checks completed processes
 
- */
+
+
+void getVariables() {
+    //declaration of loop variables;
+    int i, j, k;
+
+    cout << "Please enter the number of process:";
+    cin >> n;
+    //Looping the control flag.
+    for (i = 0; i < n; i++) {
+        flag[i] = 0;
+    }
+    cout << endl;
+    cout << "Please enter the number of resources types:";
+    cin >> m;
+    cout << endl;
+    //----------------------
+    //Getting input for Max Matrix
+    //TODO: Implement a string array for title :)
+    cout << "Input for Max" << endl;
+    for (j = 0; j < n; j++) //Getting input across process number
+    {
+        cout << "P[" << j << "]:  ";
+        for (k = 0; k < m; k++) //Getting input across resource types;
+        {
+            cin >> maxMatrix[j][k];
+        }
+    }
+
+    //----------------------
+    //Getting input for Allocation Matrix
+    //TODO: Implement a string array for title :)
+    cout << "Input for Allocation" << endl;
+    for (j = 0; j < n; j++) //Getting input across process number
+    {
+        cout << "P[" << j << "]:  ";
+        for (k = 0; k < m; k++) //Getting input across resource types;
+        {
+            cin >> allocation[j][k];
+        }
+    }
+    //----------------------
+    //Getting input for Allocation Matrix
+    cout << "Input for Available Resources" << endl;
+    for (k = 0; k < m; k++) //Getting input across process number
+    {
+        cin >> available[k];
+    }
+}
+
+void calculateNeed()
+{
+    //declaration of loop variables;
+    int i, j;
+    for(i = 0; i<n; i++)
+    {
+        for(j = 0; j<m; j++)
+        {
+            needMatrix[i][j] = maxMatrix[i][j] - allocation[i][j];
+        }
+    }
+}
 
 void bankersFun(int processNum, int available[],
                 int alloc[], int need[])
@@ -35,15 +82,7 @@ void bankersFun(int processNum, int available[],
 
 }
 
-void getVariables(){
-    int n, m;
-    cout<<"Please enter the number of process:";
-    cin>>n;
-    cout<<endl;
-    cout<<"Please enter the number of resources types:";
-    cin>>m;
-    cout<<endl;
-}
+
 
 
 
