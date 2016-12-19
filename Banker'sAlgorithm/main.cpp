@@ -1,175 +1,129 @@
-#include <iostream>
+#include<iostream>
 
 using namespace std;
 
-//TODO: Check for the style!
 
-//Set the global variables
+//Setting the variables as global variables:
+int processNum;
+//Since we know resource types, I simply will use  A B C for each matrix types.
+int allocationA[100], allocationB[100], allocationC[100];
+int maxA[100], maxB[100], maxC[100];
+int availableA,availableB, availableC;
+int needA[100], needB[100], needC[100];
+int checkFlag[100];
 
-int allocation[100][100];
-int maxMatrix[100][100]; //Don't ever use max as name because it's declared as sth else and can't implemented as arrays.
-int available[100];
-int needMatrix[100][100];
-int safeSequence[100];
-
-int flag[100]; //A flag which checks completed processes
-
-
-
-int getMaxMatrix(int processNum, int resourceType)
+//Function to set the process number by the user.
+int getProcessNum()
 {
-    int j, k;
-    //Getting input for Max Matrix
-    //TODO: Implement a string array for title :)
-    cout << "Input for Max" << endl;
-    for ( j = 0; j <processNum; j++) //Getting input across process number
-    {
-        cout << "P[" << j << "]:  ";
-        for ( k = 0; k < resourceType; k++) //Getting input across resource types;
-        {
-            cin >> maxMatrix[j][k];
-        }
-    }
-    return maxMatrix[j][k];
+    cout<<"enter the number of process: ";
+    cin>>processNum;
+    return processNum;
 }
 
-int getAllocationMatrix(int processNum, int resourceType)
-{
-    int k, j;
-    //Getting input for Allocation Matrix
-    //TODO: Implement a string array for title :)
-    cout << "Input for Allocation" << endl;
-    for (j = 0; j < processNum; j++) //Getting input across process number
-    {
-        cout << "P[" << j << "]:  ";
-        for (k = 0; k < resourceType; k++) //Getting input across resource types;
-        {
-            cin >> allocation[j][k];
-        }
-    }
-    return allocation[j][k];
-}
-
-//int getAvailableResource(int resourceType)
-//{
-//    int k;
-//    cout << "Input for Available Resources" << endl;
-//    for (k = 0; k < resourceType; k++) //Getting input across process number
-//    {
-//        cin >> available[k];
-//    }
-//    return available[k];
-//}
-
-int controlFlag(int processNum)
+//Getting the Allocation Matrix
+void getAllocationMatrix()
 {
     int i;
-    //Looping the control f lag.
-    for (i = 0; i <processNum; i++) {
-        flag[i] = 0;
+    cout<<"Please Enter the Allocation Matrix"<<endl;
+    cout<<"     A-B-C"<<endl;
+    for(i=1;i<=processNum;i++)
+    {
+        cout<<"P["<<i-1<<"}: "; //Since I started the loop from 1, to write process number in a row I decreased it by 1
+        cin>>allocationA[i];
+        cin>>allocationB[i];
+        cin>>allocationC[i];
     }
-    return flag[i];
+    for(i=1;i<=processNum;i++)
+    {checkFlag[i]=0;
+    }
 }
 
-int calculateNeed(int processNum, int resourceType)
+//Getting the Max Matrix
+void getMaxMatrix()
 {
-    //declaration of loop variables;
-    int i, j;
-    for(i = 0; i<processNum; i++)
+    int i;
+    cout<<"Please Enter the Max Matrix";
+    cout<<endl<<"     A-B-C"<<endl;
+    for(i=1;i<=processNum;i++)
     {
-        for(j = 0; j<resourceType; j++)
-        {
-            needMatrix[i][j] = maxMatrix[i][j] - allocation[i][j];
-        }
+        cout<<"P["<<i-1<<"}: ";
+        cin>>maxA[i];
+        cin>>maxB[i];
+        cin>>maxC[i];
     }
-    cout<<needMatrix[i][j];
 }
 
-void bankersFun(int processNumber, int resourceType)
+void getAvailableProcess()
 {
-    int processNum = processNumber;
-    int i, j;
-    int counter = 0;
-    do{
-        cout<<endl;
-        cout<<"Max matrix:           Allocation Matrix: "<<endl;
-        for( i = 0; i<processNum; i++)
-        {
-            for( j=0 ; j<resourceType; j++)
-            {
-                cout<<maxMatrix[i][j]<<"     ";
-                cout<<allocation[i][j]<<"     ";
-                cout<<endl;
-            }
-            processNum = -1;
-            for(i = 0; i<resourceType; i++)
-            {
-                if(controlFlag(processNumber) == 0)
-                {
-                    processNum = i;
-                    for (j=0 ; j<resourceType; j++)
-                    {
-                        if(available[j] < needMatrix[i][j]);
-                        {
-                            processNum = -1;
-                            break;
-                        }
-                    }
-                }
-                if(processNum != -1)
-                {
-                    break;
-                }
-            }
-            if(processNum != -1)
-            {
-                cout<<"P["<<processNumber+ 1<<"]";
-                safeSequence[counter] = processNumber + 1;
-                counter++;
-                for(j= 0; j<resourceType; j++)
-                {
-                    available[resourceType] += allocation[processNumber][j];
-                    allocation[processNumber][j] = 0;
-                    maxMatrix[processNumber][j] = 0;
-                    flag[processNum] = 1;
-                }
-            }
-        }
-    }while(counter != resourceType && processNum !=-1);
-    if(counter == processNumber)
+    cout<<"Please Enter the Available Row:"<<endl;
+    cout<<"     A-B-C"<<endl;
+    cin>>availableA;
+    cin>>availableB;
+    cin>>availableC;
+}
+//We can simply calculate the Need Matrix:
+//Needi = Max[i] –Available[i] ;
+void calculateNeed()
+{
+    int i;
+    cout<<"The Need Matrix is: "<<endl;
+    cout<<"A-B-C"<<endl;
+    for(i=1;i<=processNum;i++)
     {
-        cout<<"The system is in the safe state"<<endl;
-        cout<<"The safe sequence is: ";
-        for( i = 0; i < processNumber; i++)
-        {
-            cout<<safeSequence[i];
-        }
+        needA[i]=maxA[i]-allocationA[i];
+        needB[i]=maxB[i]-allocationB[i];
+        needC[i]=maxC[i]-allocationC[i];
+        cout<<needA[i]<<" "<<needB[i]<<" "<<needC[i]<<endl;
     }
-    else
-    {
-        cout<<"The system is not in the safe state"<<endl;
-    }
-
 }
 
-int main(){
-    int n;
-    cout << "Please enter the number of process:";
-    cin >> n;
-    cout << endl;
-    int m;
-    cout << "Please enter the number of resources types:";
-    cin >> m;
-    getMaxMatrix(n, m);
+void setSequence()
+{
+    int i;
+    cout<<"The Sequence Is:"<<endl;
+    z:
+    for(i=1;i<=processNum;i++)
+    {
+        //To check if the system is in safe state
+        if(availableA>=needA[i]&&availableB>=needB[i]&&availableC>=needC[i]&&checkFlag[i]!=-1)
+        {
+            cout<<"P["<<i-1<<"]"<<"\t";
+            checkFlag[i]=-1;
+            availableA=availableA+allocationA[i];
+            availableB=availableB+allocationB[i];
+            availableC=availableC+allocationC[i];
+        }
+
+    }
+    for(i=1;i<=processNum;i++)
+    {if(checkFlag[i]!=-1)
+        {goto z;
+        }
+    }
+    //I'm declaring it as a different if statement instead of declaring as else statement above
+    //to not turn it in the loop
+    if(availableA<needA[i]|| availableB<needB[i] || availableC<needC[i] || checkFlag[i]!=0)
+    {
+        cout<<"The system is not in the safe state!"<<endl;
+    }
+}
+
+void print()
+{
+    getProcessNum();
     cout<<endl;
-    getAllocationMatrix(n, m);
+    getAllocationMatrix();
     cout<<endl;
-    //getAvailableResource(n);
+    getMaxMatrix();
     cout<<endl;
-    cout<<"---------"<<endl;
-    calculateNeed(n, m);
-    controlFlag(n);
-    calculateNeed(n, m);
-    bankersFun(n, m);
-    return 0;
+    getAvailableProcess();
+    cout<<endl;
+    calculateNeed();
+    cout<<endl;
+    setSequence();
+}
+
+int main()
+{
+    print();
 }
