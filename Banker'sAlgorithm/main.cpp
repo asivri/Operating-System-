@@ -14,33 +14,18 @@ int safeSequence[100];
 
 int flag[100]; //A flag which checks completed processes
 
-int getProcessNum()
-{
-    int n;
-    cout << "Please enter the number of process:";
-    cin >> n;
-    cout << endl;
-    return n;
-}
 
-int getResourceType()
-{
-    int m;
-    cout << "Please enter the number of resources types:";
-    cin >> m;
-    return m;
-}
 
-int getMaxMatrix()
+int getMaxMatrix(int processNum, int resourceType)
 {
     int j, k;
     //Getting input for Max Matrix
     //TODO: Implement a string array for title :)
     cout << "Input for Max" << endl;
-    for ( j = 0; j < getProcessNum(); j++) //Getting input across process number
+    for ( j = 0; j <processNum; j++) //Getting input across process number
     {
         cout << "P[" << j << "]:  ";
-        for ( k = 0; k < getResourceType(); k++) //Getting input across resource types;
+        for ( k = 0; k < resourceType; k++) //Getting input across resource types;
         {
             cin >> maxMatrix[j][k];
         }
@@ -48,16 +33,16 @@ int getMaxMatrix()
     return maxMatrix[j][k];
 }
 
-int getAllocationMatrix()
+int getAllocationMatrix(int processNum, int resourceType)
 {
     int k, j;
     //Getting input for Allocation Matrix
     //TODO: Implement a string array for title :)
     cout << "Input for Allocation" << endl;
-    for (j = 0; j < getProcessNum(); j++) //Getting input across process number
+    for (j = 0; j < processNum; j++) //Getting input across process number
     {
         cout << "P[" << j << "]:  ";
-        for (k = 0; k < getResourceType(); k++) //Getting input across resource types;
+        for (k = 0; k < resourceType; k++) //Getting input across resource types;
         {
             cin >> allocation[j][k];
         }
@@ -65,64 +50,64 @@ int getAllocationMatrix()
     return allocation[j][k];
 }
 
-int getAvailableResource()
-{
-    int k;
-    cout << "Input for Available Resources" << endl;
-    for (k = 0; k < getResourceType(); k++) //Getting input across process number
-    {
-        cin >> available[k];
-    }
-    return available[k];
-}
+//int getAvailableResource(int resourceType)
+//{
+//    int k;
+//    cout << "Input for Available Resources" << endl;
+//    for (k = 0; k < resourceType; k++) //Getting input across process number
+//    {
+//        cin >> available[k];
+//    }
+//    return available[k];
+//}
 
-int controlFlag()
+int controlFlag(int processNum)
 {
     int i;
     //Looping the control f lag.
-    for (i = 0; i <getProcessNum(); i++) {
+    for (i = 0; i <processNum; i++) {
         flag[i] = 0;
     }
     return flag[i];
 }
 
-int calculateNeed()
+int calculateNeed(int processNum, int resourceType)
 {
     //declaration of loop variables;
     int i, j;
-    for(i = 0; i<getProcessNum(); i++)
+    for(i = 0; i<processNum; i++)
     {
-        for(j = 0; j<getResourceType(); j++)
+        for(j = 0; j<resourceType; j++)
         {
             needMatrix[i][j] = maxMatrix[i][j] - allocation[i][j];
         }
     }
-    return needMatrix[i][j];
+    cout<<needMatrix[i][j];
 }
 
-void bankersFun()
+void bankersFun(int processNumber, int resourceType)
 {
-    int processNum = getProcessNum();
+    int processNum = processNumber;
     int i, j;
     int counter = 0;
     do{
         cout<<endl;
         cout<<"Max matrix:           Allocation Matrix: "<<endl;
-        for( i = 0; i<getProcessNum(); i++)
+        for( i = 0; i<processNum; i++)
         {
-            for( j=0 ; j<getResourceType(); j++)
+            for( j=0 ; j<resourceType; j++)
             {
                 cout<<maxMatrix[i][j]<<"     ";
                 cout<<allocation[i][j]<<"     ";
                 cout<<endl;
             }
             processNum = -1;
-            for(i = 0; i<getProcessNum(); i++)
+            for(i = 0; i<resourceType; i++)
             {
-                if(controlFlag() == 0)
+                if(controlFlag(processNumber) == 0)
                 {
                     processNum = i;
-                    for (j=0 ; j<getResourceType(); j++)
+                    for (j=0 ; j<resourceType; j++)
                     {
                         if(available[j] < needMatrix[i][j]);
                         {
@@ -138,24 +123,24 @@ void bankersFun()
             }
             if(processNum != -1)
             {
-                cout<<"P["<<getProcessNum() + 1<<"]";
-                safeSequence[counter] = getProcessNum() + 1;
+                cout<<"P["<<processNumber+ 1<<"]";
+                safeSequence[counter] = processNumber + 1;
                 counter++;
-                for(j= 0; j<getResourceType(); j++)
+                for(j= 0; j<resourceType; j++)
                 {
-                    available[getResourceType()] += allocation[getProcessNum()][j];
-                    allocation[getProcessNum()][j] = 0;
-                    maxMatrix[getProcessNum()][j] = 0;
+                    available[resourceType] += allocation[processNumber][j];
+                    allocation[processNumber][j] = 0;
+                    maxMatrix[processNumber][j] = 0;
                     flag[processNum] = 1;
                 }
             }
         }
-    }while(counter != getResourceType() && processNum !=-1);
-    if(counter == getProcessNum())
+    }while(counter != resourceType && processNum !=-1);
+    if(counter == processNumber)
     {
         cout<<"The system is in the safe state"<<endl;
         cout<<"The safe sequence is: ";
-        for( i = 0; i < getProcessNum(); i++)
+        for( i = 0; i < processNumber; i++)
         {
             cout<<safeSequence[i];
         }
@@ -168,6 +153,23 @@ void bankersFun()
 }
 
 int main(){
-
+    int n;
+    cout << "Please enter the number of process:";
+    cin >> n;
+    cout << endl;
+    int m;
+    cout << "Please enter the number of resources types:";
+    cin >> m;
+    getMaxMatrix(n, m);
+    cout<<endl;
+    getAllocationMatrix(n, m);
+    cout<<endl;
+    //getAvailableResource(n);
+    cout<<endl;
+    cout<<"---------"<<endl;
+    calculateNeed(n, m);
+    controlFlag(n);
+    calculateNeed(n, m);
+    bankersFun(n, m);
     return 0;
 }
